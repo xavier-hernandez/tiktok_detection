@@ -47,7 +47,7 @@ To configure the tool, follow these steps:
   "tiktok": [
     "https://www.tiktok.com/@deborah.look.no.hands"
   ],
-  "timeout": 1,
+  "timeout": 5,
   "similarityTrigger": 90
 }
 ```
