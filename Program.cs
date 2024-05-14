@@ -57,6 +57,7 @@ namespace TikTokDetection
                         using var page = await browser.NewPageAsync();
 
                         await page.GoToAsync(tiktokUrl, null, new[] { WaitUntilNavigation.Networkidle2 });
+                        await page.EvaluateExpressionAsync(@"document.querySelectorAll('[style*=""z-index: 111111""]').forEach(e => e.remove())");
                         await page.EvaluateExpressionAsync(@"document.querySelectorAll('[style*=""z-index: 1001""]').forEach(e => e.remove())");
                         await page.EvaluateExpressionAsync(@"document.querySelectorAll('div[class*=""DivHeaderWrapperMain-StyledDivHeaderWrapperMainV2""]').forEach(e => e.remove())");
 
