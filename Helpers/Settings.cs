@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections;
 using System.Runtime.InteropServices;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TikTokDetection.Helpers
 {
@@ -12,10 +13,12 @@ namespace TikTokDetection.Helpers
         public string[] tiktok { get; set; }
         public int timeout { get; set; }
         public double? similarityTrigger { get; set; }
+        public bool debug { get; set; }
 
         public static string settingsDir = string.Empty;
         public static string screenshotsDir = string.Empty;
         public static string settingsFileName = string.Empty;
+        public static string debugDir = string.Empty;
 
         public Settings() { }
         public Settings LoadSettings()
@@ -25,19 +28,14 @@ namespace TikTokDetection.Helpers
                 settingsDir = "/assets/";
                 screenshotsDir = Path.Combine(settingsDir, "screenshots/");
                 settingsFileName = Path.Combine(settingsDir, "settings.json");
+                debugDir = Path.Combine(settingsDir, "debug/");
             }
             else
             {
                 settingsDir = Directory.GetCurrentDirectory();
                 screenshotsDir = Path.Combine(settingsDir, "screenshots\\");
                 settingsFileName = Path.Combine(settingsDir, "settings.json");
-            }
-
-
-            if (!Directory.Exists(settingsDir))
-            {
-                logger.LogError("No assets directory mounted");
-                Environment.Exit(1);
+                debugDir = Path.Combine(settingsDir, "debug\\");
             }
 
             if (!Directory.Exists(settingsDir))
@@ -74,11 +72,25 @@ namespace TikTokDetection.Helpers
                     tiktok = settings.tiktok;
                     timeout = settings.timeout == 0 ? 30 : settings.timeout;
                     similarityTrigger = settings.similarityTrigger ?? 100;
+                    debug = settings.debug;
                 }
                 catch (Exception ex)
                 {
                     logger.LogInformation("Trouble reading settings.json; check formatting");
                     logger.LogError(ex.Message);
+                }
+
+                try
+                {
+                    if (!Directory.Exists(debugDir) && debug)
+                    {
+                        Directory.CreateDirectory(debugDir);
+                    }
+                }
+                catch
+                {
+                    logger.LogError("Error creating debug direcotry within assets directory; check permissions");
+                    Environment.Exit(1);
                 }
             }
 
@@ -113,6 +125,11 @@ namespace TikTokDetection.Helpers
             string[] segments = uri.Segments;
             char[] invalidChars = Path.GetInvalidFileNameChars();
             return string.Join("", segments[segments.Length - 1].Split(invalidChars));
+        }
+
+        public static void SaveHtml(string url, string html)
+        {
+            File.WriteAllText(Path.Combine(debugDir, SanitizeUserName(url))+".html", html);
         }
     }
 }

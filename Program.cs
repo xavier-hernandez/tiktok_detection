@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using PuppeteerSharp;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using TikTokDetection.Helpers;
 
@@ -62,6 +63,13 @@ namespace TikTokDetection
 
                         var divSelector = "[class*=DivShareInfo]";
                         var divHandle = await page.WaitForSelectorAsync(divSelector);
+
+                        //debug
+                        if (s.debug) {
+                            string divHtmlContent = await page.EvaluateFunctionAsync<string>("element => element.outerHTML", divHandle);
+                            Settings.SaveHtml(tiktokUrl, divHtmlContent);
+                        }
+
 
                         string newFileName = Settings.SanitizeFileName(tiktokUrl + "_new.png");
                         string oldFileName = Settings.SanitizeFileName(tiktokUrl + "_old.png");

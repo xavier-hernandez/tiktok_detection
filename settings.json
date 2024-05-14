@@ -5,5 +5,6 @@
     "https://www.tiktok.com/@deborah.look.no.hands"
   ],
   "timeout": 1,
-  "similarityTrigger": 90
+  "similarityTrigger": 90,
+  "debug":  true
 }
