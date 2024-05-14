@@ -58,18 +58,19 @@ namespace TikTokDetection
                         using var page = await browser.NewPageAsync();
 
                         await page.GoToAsync(tiktokUrl, null, new[] { WaitUntilNavigation.Networkidle2 });
+
+                        //debug
+                        if (s.debug)
+                        {
+                            string htmlContent = await page.GetContentAsync();
+                            Settings.SaveHtml(tiktokUrl, htmlContent);
+                        }
+
                         await page.EvaluateExpressionAsync(@"document.querySelectorAll('[style*=""z-index: 1001""]').forEach(e => e.remove())");
                         await page.EvaluateExpressionAsync(@"document.querySelectorAll('div[class*=""DivHeaderWrapperMain-StyledDivHeaderWrapperMainV2""]').forEach(e => e.remove())");
 
                         var divSelector = "[class*=DivShareInfo]";
                         var divHandle = await page.WaitForSelectorAsync(divSelector);
-
-                        //debug
-                        if (s.debug) {
-                            string divHtmlContent = await page.EvaluateFunctionAsync<string>("element => element.outerHTML", divHandle);
-                            Settings.SaveHtml(tiktokUrl, divHtmlContent);
-                        }
-
 
                         string newFileName = Settings.SanitizeFileName(tiktokUrl + "_new.png");
                         string oldFileName = Settings.SanitizeFileName(tiktokUrl + "_old.png");
