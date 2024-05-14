@@ -1,0 +1,9 @@
+{
+  "apprise": [
+  ],
+  "tiktok": [
+    "https://www.tiktok.com/@deborah.look.no.hands"
+  ],
+  "timeout": 1,
+  "similarityTrigger": 90
+}
